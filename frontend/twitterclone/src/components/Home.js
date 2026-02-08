@@ -12,14 +12,18 @@ const Home = () => {
   useGetTweets(user?._id);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
-      <div className="max-w-[1280px] mx-auto flex">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors">
+      {/* Layout Wrapper */}
+      <div className="max-w-[1280px] mx-auto flex gap-6 px-4">
+        {/* Left Sidebar */}
         <LeftSidebar />
 
-        <main className="flex-1 max-w-[680px] border-x border-gray-200 dark:border-gray-800">
+        {/* Center Column */}
+        <main className="flex-1 max-w-[680px] w-full mx-auto">
           <Outlet />
         </main>
 
+        {/* Right Sidebar */}
         <RightSideBar otherUsers={otherUsers} />
       </div>
     </div>

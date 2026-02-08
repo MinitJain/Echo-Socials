@@ -6,12 +6,14 @@ const Feed = () => {
   const { tweets } = useSelector((store) => store.tweet);
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-2 pt-4">
       <CreatePost />
       {Array.isArray(tweets) && tweets.length > 0 ? (
         tweets.map((tweet) => <Tweet key={tweet._id} tweet={tweet} />)
       ) : (
-        <p className="text-center text-gray-500">No tweets found</p>
+        <p className="text-center text-zinc-500 dark:text-zinc-400">
+          No tweets found
+        </p>
       )}
     </div>
   );
