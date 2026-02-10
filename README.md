@@ -1,4 +1,4 @@
-## Echo 🚀
+## Echo
 
 **Echo** is a production-oriented, AI-ready **microblogging platform** built with the **MERN stack**.  
 It is designed to demonstrate **scalable full-stack architecture**, **secure authentication**, **clean API design**, and **modern frontend infrastructure** using **Vite** and **Tailwind CSS**.
