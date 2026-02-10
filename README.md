@@ -1,202 +1,314 @@
-# Echo — AI-Enabled Microblogging Platform
+# Echo 🚀
 
-Echo is an AI-enabled microblogging platform inspired by modern social networks like Threads and X, designed to provide a fast, secure, and scalable social experience. Built using the MERN stack (MongoDB, Express, React, Node.js), Echo focuses on clean architecture, real-world backend practices, and a Copilot-style user experience for content creation and interaction.
+**Echo** is a production-oriented, AI-ready **microblogging platform** built with the **MERN stack**.  
+It is designed to demonstrate **scalable full-stack architecture**, **secure authentication**, **clean API design**, and **modern frontend infrastructure** using **Vite** and **Tailwind CSS**.
 
-Echo is built as a production-oriented full-stack application, not a tutorial project, with emphasis on authentication, security, scalability, and deployment best practices.
+> ⚠️ This is **not** a tutorial project.  
+> The structure, configuration, and deployment model reflect **real-world production practices**.
 
-## Key Highlights
+---
 
-- End-to-end full-stack architecture
-- JWT-based authentication with secure cookies
-- Copilot-style microblogging experience (extensible for AI features)
-- Clean REST APIs with proper error handling
-- Deployed on Render (Backend) and Vercel (Frontend)
-- Production-ready CORS, rate-limiting, and environment handling
+## ✨ Key Highlights
 
-## Features
+- Secure, cookie-based **JWT authentication**
+- Production-ready **CORS configuration**
+- Clear **backend separation of concerns**
+- Modern frontend architecture (**Vite + React 19**)
+- **AI integration-ready** structure (Copilot-style assistant)
 
-### Authentication & Users
+---
 
-- User registration and login
-- JWT authentication with HTTP-only cookies
-- Secure password hashing using bcrypt
-- Protected routes and session handling
-- Rate-limited authentication endpoints
+## 🏗 Architecture Overview
 
-### Microblogging
+Echo is structured as a **monorepo** with a clear separation between frontend and backend services.
 
-- Create and delete posts (tweets)
-- Like / dislike posts
-- Bookmark posts for later
-- Personalized feed based on following
-- Profile-based post visibility
+```text
+echo/
+├── backend/              # Express API server
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── index.js
+│   └── ...
+│
+├── frontend/             # React + Vite application
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── redux/
+│   │   ├── Hooks/
+│   │   ├── utils/
+│   │   ├── main.jsx
+│   │   └── App.jsx
+│   ├── index.html
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   └── ...
+│
+├── package.json          # Root orchestration scripts
+└── README.md
 
-### Social Interactions
 
-- Follow and unfollow users
-- View user profiles and activity
-- Real-time UI updates via Redux state management
 
-### AI-Ready Architecture
+🛠 Tech Stack
+Backend
 
-Designed to support Copilot-style assistance for:
-- Smarter post composition
-- Content suggestions
-- Intelligent UX enhancements
-- Clean separation of concerns to easily integrate AI services later
+Node.js
 
-### UI & UX
+Express.js
 
-- Responsive design using Tailwind CSS
-- Minimal, modern layout inspired by real social platforms
-- Optimized for desktop and mobile views
+MongoDB + Mongoose
 
-### Security & Reliability
+JWT (HTTP-only cookie authentication)
 
-- Secure CORS configuration for cross-origin requests
-- Environment-based configuration (no secrets in code)
-- Centralized error handling
-- Health-check endpoint for monitoring backend uptime
+bcrypt (password hashing)
 
-## Tech Stack
+Helmet (security headers)
 
-### Backend
-- Node.js
-- Express.js
-- MongoDB + Mongoose
-- JWT (Authentication)
-- bcryptjs (Password hashing)
-- Helmet (Security headers)
-- CORS (Restricted origins)
-- Rate limiting for sensitive endpoints
+CORS (strict origin control)
 
-### Frontend
-- React
-- Redux Toolkit
-- Axios
-- React Router
-- Tailwind CSS
+Rate limiting (authentication endpoints)
 
-### Deployment
-- Backend: Render
-- Frontend: Vercel
+Frontend
 
-## Live Demo
+React 19
 
-**Live Application:** [https://echo-socials.vercel.app](https://echo-socials.vercel.app)
+Vite
 
-## Getting Started
+Redux Toolkit
 
-### Prerequisites
+React Router
 
-- Node.js v18 or higher
-- npm
-- MongoDB Atlas (or local MongoDB instance)
+Axios
 
-### Environment Variables
+Tailwind CSS v3
 
-#### Backend (`backend/.env`)
+CopilotKit (AI integration layer)
 
-```env
-MONGO_URI=your_mongodb_uri
+🚀 Deployment
+
+Backend: Render
+
+Frontend: Vercel
+
+🔐 Core Capabilities
+Authentication
+
+JWT stored in secure HTTP-only cookies
+
+Password hashing with bcrypt
+
+/me endpoint for session hydration
+
+Protected routes via middleware
+
+Proper cross-origin credential handling
+
+Social Features
+
+Post creation & deletion
+
+Like / unlike posts
+
+Bookmarking
+
+Follow / unfollow users
+
+User profiles
+
+Feed aggregation
+
+🤖 AI-Ready Architecture
+
+Echo integrates CopilotKit and is structured to support:
+
+Assisted post composition
+
+Intelligent UX enhancements
+
+Context-aware AI features
+
+Modular AI service integration
+
+⚙️ Environment Configuration
+Backend (backend/.env)
 PORT=8080
-JWT_SECRET=your_jwt_secret
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_secret
 FRONTEND_URL=https://your-vercel-domain.vercel.app
-```
 
-#### Frontend (`frontend/twitterclone/.env`)
+Frontend (frontend/.env)
+VITE_API_URL=https://your-backend-domain.onrender.com
 
-```env
-REACT_APP_API_URL=https://your-backend-domain.onrender.com
-```
 
-## Installation & Setup
+⚠️ Important:
+Frontend environment variables must use the VITE_ prefix.
+Vite does not expose other environment variables to the client.
 
-### 1. Clone the repository
+🧪 Local Development
+Install Dependencies
 
-```bash
-git clone https://github.com/MinitJain/Echo-aTwitterClone.git
-cd Echo-aTwitterClone
-```
+From the project root:
 
-### 2. Install dependencies
+npm run install-all
 
-```bash
-npm install --prefix backend
-npm install --prefix frontend/twitterclone
-```
 
-### 3. Build the frontend
+Or manually:
 
-```bash
-npm run build --prefix frontend/twitterclone
-```
+cd backend && npm install
+cd ../frontend && npm install
 
-### 4. Start the backend server
+Run Development Servers
 
-```bash
-npm start --prefix backend
-```
+From the root directory:
 
-### 5. Verify backend health
+npm run dev
 
-```bash
+
+This runs:
+
+Backend: http://localhost:8080
+
+Frontend: http://localhost:5173
+
+Verify Backend Health
 curl http://localhost:8080/api/health
-```
+
 
 Expected response:
 
-```json
 {
   "status": "ok"
 }
-```
 
-## Project Structure
+📦 Production Build
 
-```
-Echo-aTwitterClone/
-├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   ├── index.js
-│   └── ...
-├── frontend/
-│   └── twitterclone/
-│       ├── src/
-│       ├── public/
-│       ├── build/
-│       └── ...
-├── README.md
-└── ...
-```
+To build the frontend:
 
-## Security & Production Notes
+cd frontend
+npm run build
 
-- All secrets are managed via environment variables
-- No credentials are committed to the repository
-- Strict CORS policy allowing only trusted origins
-- Secure cookies for authentication
-- Backend endpoints protected with validation and error handling
-- Suitable for real-world deployment and scaling
 
-## Future Enhancements
+Vite outputs static assets to:
 
-- AI-powered post suggestions
-- Content moderation using AI
-- Real-time notifications
-- Media uploads (images/videos)
-- Infinite scrolling and performance optimizations
+frontend/dist/
 
-## Author
+☁️ Deployment Guide
+Frontend (Vercel)
 
-Made by **Minit Jain**
+Configuration
 
-If you're a recruiter, mentor, or developer reviewing this project — feel free to explore, fork, or reach out!
+Framework: Vite
 
-## License
+Root Directory: frontend
 
-This project is open source and available under the MIT License.
+Build Command: npm run build
+
+Output Directory: dist
+
+Environment Variables
+
+VITE_API_URL=https://your-render-backend.onrender.com
+
+Backend (Render)
+
+Deploy from /backend
+
+Set environment variables in the dashboard
+
+Ensure FRONTEND_URL matches your Vercel domain
+
+Enable credentials in CORS configuration
+
+🔒 Security Considerations
+
+JWT stored in HTTP-only cookies
+
+CORS configured with strict origin whitelist
+
+Credentials enabled for cross-origin requests
+
+Passwords hashed with bcrypt
+
+Helmet used for secure HTTP headers
+
+Environment variables for all secrets
+
+No credentials committed to the repository
+
+🌐 CORS Model
+
+Backend allows:
+
+Local development origins (localhost:5173, etc.)
+
+Production frontend domain via FRONTEND_URL
+
+Cookies are transmitted using Axios:
+
+axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
+});
+
+
+Server must respond with:
+
+credentials: true
+
+📜 Build & Script Reference
+Root Scripts
+{
+  "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+  "build": "cd frontend && npm run build",
+  "install-all": "cd backend && npm install && cd ../frontend && npm install",
+  "start": "cd backend && npm start"
+}
+
+✅ Production Readiness Notes
+
+Vite replaces CRA for modern ESM-based builds
+
+Tailwind v3 ensures stable PostCSS compatibility
+
+PostCSS config uses CommonJS (.cjs) for Vite compatibility
+
+Lockfiles regenerated post-migration
+
+No CRA artifacts remain
+
+No REACT_APP_* variables remain
+
+⚠️ Known Limitations
+
+No real-time WebSocket notifications
+
+No media upload support
+
+No horizontal scaling (single backend instance)
+
+No automated test suite included
+
+🔮 Future Improvements
+
+Real-time notifications (WebSockets)
+
+Media uploads (S3 or Cloudinary)
+
+Infinite scrolling with cursor-based pagination
+
+Horizontal scaling with Redis-backed session control
+
+Observability integration (OpenTelemetry)
+
+AI-based moderation pipeline
+
+📄 License
+
+MIT
+
+👤 Maintainer
+
+Minit Jain
