@@ -8,19 +8,18 @@ const useOtherUsers = (id) => {
   const dispatch = useDispatch();
 
   const fetchOtherUsers = useCallback(async () => {
+    if (!id) return;
+
     try {
-      const res = await axios.get(`${USER_API_END_POINT}/otherusers/${id}`, {
+      const res = await axios.get(`${USER_API_END_POINT}/otherusers`, {
         withCredentials: true,
       });
 
-      // Log the full response to see actual structure
-      console.log("Full Other Users Response:", res.data);
-
-      dispatch(getOtherUsers(res.data.OtherUser));
+      dispatch(getOtherUsers(res.data.otherUsers));
     } catch (error) {
-      console.log("Failed to fetch other users Error: ", error);
+      console.log("Failed to fetch other users:", error);
     }
-  }, [id, dispatch]);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchOtherUsers();
