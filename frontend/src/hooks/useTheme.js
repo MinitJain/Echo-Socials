@@ -6,7 +6,7 @@ const getInitialTheme = () => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
 };
 
-export default function useTheme() {
+export const useTheme = () => {
   const [isDark, setIsDark] = useState(getInitialTheme);
 
   useEffect(() => {
@@ -24,4 +24,6 @@ export default function useTheme() {
   const toggleTheme = () => setIsDark((prev) => !prev);
 
   return { isDark, toggleTheme };
-}
+};
+
+export default useTheme;
