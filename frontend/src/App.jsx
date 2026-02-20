@@ -7,6 +7,7 @@ import Body from "./components/Body";
 import Login from "./components/Login";
 import { Toaster } from "react-hot-toast";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const dispatch = useDispatch();
@@ -65,6 +66,7 @@ function App() {
         }}
       />
       <SpeedInsights />
+      <Analytics debug={true} />
     </div>
   );
 }
