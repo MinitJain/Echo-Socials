@@ -5,10 +5,11 @@ import jwt from "jsonwebtoken";
 
 export const Register = async (req, res) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
     const { name, username, email, password } = req.body;
 
     if (!name || !username || !email || !password) {
-      console.log("Missing Fields:", name, username, email, password);
+      console.log("Missing Fields:", name, username, email);
       return res.status(400).json({
         message: "All fields are required.",
         success: false,
@@ -53,8 +54,8 @@ export const Register = async (req, res) => {
       .status(201)
       .cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none',
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
         maxAge: 24 * 60 * 60 * 1000,
       })
       .json({
@@ -73,6 +74,7 @@ export const Register = async (req, res) => {
 
 export const Login = async (req, res) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -119,8 +121,8 @@ export const Login = async (req, res) => {
       .status(200)
       .cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none',
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
         maxAge: 24 * 60 * 60 * 1000,
       })
       .json({
@@ -138,12 +140,12 @@ export const Login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  // Clear the token cookie
+  const isProduction = process.env.NODE_ENV === "production";
   return res
     .cookie("token", "", {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       expires: new Date(0),
     })
     .status(200)

@@ -1,6 +1,5 @@
-import axios from "axios";
-import { USER_API_END_POINT } from "../utils/constant";
-import { useDispatch, useSelector } from "react-redux"; // 1. Added useSelector here
+import API from "../api/axios";
+import { useDispatch, useSelector } from "react-redux";
 import { getOtherUsers } from "../redux/userSlice";
 import { useCallback, useEffect } from "react";
 
@@ -11,9 +10,7 @@ const useOtherUsers = () => {
 
   const fetchOtherUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`${USER_API_END_POINT}/otherusers`, {
-        withCredentials: true,
-      });
+      const res = await API.get("/user/otherusers");
 
       console.log("Full Other Users Response:", res.data);
       dispatch(getOtherUsers(res.data.otherUsers));

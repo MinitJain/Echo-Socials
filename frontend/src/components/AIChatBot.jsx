@@ -57,7 +57,7 @@ const AIChatBot = ({ isOpen, onClose, isMinimized, onOpen }) => {
       }));
 
       // 3. API Call to Backend
-      const res = await API.post("/api/v1/ai/chat", {
+      const res = await API.post("/ai/chat", {
         message: userMessage,
         history,
       });

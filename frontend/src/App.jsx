@@ -5,6 +5,8 @@ import { setUser } from "./redux/userSlice";
 import API from "./api/axios";
 import Body from "./components/Body";
 import Login from "./components/Login";
+import LandingPage from "./components/LandingPage";
+import PublicFeed from "./components/PublicFeed";
 import { Toaster } from "react-hot-toast";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
@@ -28,11 +30,12 @@ function App() {
   useEffect(() => {
     const hydrateUser = async () => {
       try {
-        const res = await API.get("/api/v1/user/me");
-
+        const res = await API.get("/user/me");
         dispatch(setUser(res.data.user));
       } catch (err) {
-        console.log("No active session");
+        if (err.response?.status !== 401) {
+          console.error("Failed to hydrate user:", err);
+        }
       } finally {
         setLoading(false);
       }
@@ -55,7 +58,12 @@ function App() {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-50 transition-colors">
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        {/* PUBLIC ROUTES - Before Body wrapper */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/explore" element={<PublicFeed />} />
+        
+        {/* PROTECTED ROUTES - Body wrapper handles auth */}
         <Route path="/*" element={user ? <Body /> : <Navigate to="/login" />} />
       </Routes>
 

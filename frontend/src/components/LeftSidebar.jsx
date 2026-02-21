@@ -11,7 +11,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import useTheme from "../hooks/useTheme";
 import API from "../api/axios";
-import { USER_API_END_POINT } from "../utils/constant";
 import { setUser, getOtherUsers, getMyProfile } from "../redux/userSlice";
 import { toast } from "react-hot-toast";
 
@@ -72,9 +71,7 @@ const LeftSidebar = ({ isAIChatOpen, setIsAIChatOpen }) => {
       dispatch(getOtherUsers(null));
       dispatch(getMyProfile(null));
 
-      await API.get(`${USER_API_END_POINT}/logout`, {
-        withCredentials: true,
-      });
+      await API.get("/user/logout");
 
       toast.success("Logged out");
       navigate("/login", { replace: true });
@@ -98,7 +95,7 @@ const LeftSidebar = ({ isAIChatOpen, setIsAIChatOpen }) => {
 
         {/* Navigation */}
         <nav className="flex flex-col space-y-1.5">
-          <SidebarItem to="/" icon={RiHome5Line} label="Home" />
+          <SidebarItem to="/home" icon={RiHome5Line} label="Home" />
           {user && (
             <SidebarItem
               to={`/profile/${user._id}`}

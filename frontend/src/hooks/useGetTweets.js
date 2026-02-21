@@ -1,6 +1,5 @@
 import { useEffect, useCallback } from "react";
-import axios from "axios";
-import { TWEET_API_END_POINT } from "../utils/constant";
+import API from "../api/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllTweets } from "../redux/tweetSlice";
 import toast from "react-hot-toast";
@@ -23,9 +22,7 @@ const useGetTweets = (id) => {
     if (!user) return;
 
     try {
-      const res = await axios.get(`${TWEET_API_END_POINT}/allTweets`, {
-        withCredentials: true,
-      });
+      const res = await API.get("/tweet/allTweets");
       dispatch(getAllTweets(res.data.tweets));
     } catch (error) {
       console.log("Failed to fetch tweets:", error);
@@ -36,10 +33,7 @@ const useGetTweets = (id) => {
     if (!user) return;
 
     try {
-      const res = await axios.get(
-        `${TWEET_API_END_POINT}/followingtweets/${id}`,
-        { withCredentials: true },
-      );
+      const res = await API.get(`/tweet/followingtweets/${id}`);
 
       if (res.data.success) {
         dispatch(getAllTweets(res.data.tweets));

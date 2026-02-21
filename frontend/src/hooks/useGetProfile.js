@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import axios from "axios";
-import { USER_API_END_POINT } from "../utils/constant";
+import API from "../api/axios";
 import { useDispatch } from "react-redux";
 import { getMyProfile } from "../redux/userSlice";
 
@@ -15,13 +14,9 @@ const useGetProfile = (id) => {
         let res;
 
         if (id === "me") {
-          res = await axios.get(`${USER_API_END_POINT}/me`, {
-            withCredentials: true,
-          });
+          res = await API.get("/user/me");
         } else {
-          res = await axios.get(`${USER_API_END_POINT}/profile/${id}`, {
-            withCredentials: true,
-          });
+          res = await API.get(`/user/profile/${id}`);
         }
 
         dispatch(getMyProfile(res.data.user));

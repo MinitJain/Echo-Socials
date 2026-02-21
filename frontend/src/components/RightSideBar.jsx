@@ -3,8 +3,7 @@ import { CiSearch } from "react-icons/ci";
 import Avatar from "react-avatar";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { USER_API_END_POINT } from "../utils/constant";
+import API from "../api/axios";
 import { followingUpdate } from "../redux/userSlice";
 import { getRefresh } from "../redux/tweetSlice";
 import toast from "react-hot-toast";
@@ -21,10 +20,9 @@ const RightSideBar = ({ otherUsers }) => {
       const isFollowing = user.following.includes(userToFollowId);
       const endpoint = isFollowing ? "unfollow" : "follow";
 
-      const res = await axios.post(
-        `${USER_API_END_POINT}/${endpoint}/${userToFollowId}`,
+      const res = await API.post(
+        `/user/${endpoint}/${userToFollowId}`,
         { id: user?._id },
-        { withCredentials: true },
       );
 
       if (res.data.success) {

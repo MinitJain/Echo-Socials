@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Avatar from "react-avatar";
-import { TWEET_API_END_POINT } from "../utils/constant";
-import axios from "axios";
+import API from "../api/axios";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { getIsActive, getRefresh } from "../redux/tweetSlice";
@@ -23,10 +22,9 @@ const CreatePost = () => {
     try {
       setLoading(true);
 
-      const res = await axios.post(
-        `${TWEET_API_END_POINT}/create`,
+      const res = await API.post(
+        "/tweet/create",
         { description, id: user?._id },
-        { withCredentials: true },
       );
 
       if (res.data.success) {

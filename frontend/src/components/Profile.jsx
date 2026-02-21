@@ -13,7 +13,6 @@ import useGetProfile from "../hooks/useGetProfile";
 import useGetTweets from "../hooks/useGetTweets";
 import useTheme from "../hooks/useTheme";
 import API from "../api/axios";
-import { USER_API_END_POINT } from "../utils/constant";
 import { setUser, getOtherUsers, getMyProfile, followingUpdate } from "../redux/userSlice";
 import { getRefresh } from "../redux/tweetSlice";
 import { toast } from "react-hot-toast";
@@ -42,9 +41,7 @@ const Profile = () => {
       dispatch(getOtherUsers(null));
       dispatch(getMyProfile(null));
 
-      await API.get(`${USER_API_END_POINT}/logout`, {
-        withCredentials: true,
-      });
+      await API.get("/user/logout");
 
       toast.success("Logged out");
       navigate("/login", { replace: true });
@@ -70,7 +67,7 @@ const Profile = () => {
     try {
       const endpoint = isFollowing ? "unfollow" : "follow";
 
-      await API.post(`/api/v1/user/${endpoint}/${profile._id}`, {
+      await API.post(`/user/${endpoint}/${profile._id}`, {
         id: user?._id,
       });
 

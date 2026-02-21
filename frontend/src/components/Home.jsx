@@ -1,6 +1,6 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LeftSidebar from "./LeftSidebar";
 import RightSideBar from "./RightSideBar";
 import MobileNav from "./MobileNav";
@@ -13,6 +13,13 @@ const Home = () => {
   const { user, otherUsers } = useSelector((store) => store.user);
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [isAIMinimized, setIsAIMinimized] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
   useOtherUsers(user?._id);
   useGetTweets(user?._id);

@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdClose } from "react-icons/io";
-import axios from "axios";
+import API from "../api/axios";
 import toast from "react-hot-toast";
-import { USER_API_END_POINT } from "../utils/constant";
 import { updateUser } from "../redux/userSlice";
 
 const EditProfile = ({ isOpen, onClose }) => {
@@ -82,10 +81,9 @@ const EditProfile = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
-      const response = await axios.put(
-        `${USER_API_END_POINT}/update/${user._id}`,
+      const response = await API.put(
+        `/user/update/${user._id}`,
         formData,
-        { withCredentials: true },
       );
 
       if (response.data.success) {

@@ -8,10 +8,10 @@ import Bookmarks from "./Bookmarks";
 const Body = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />}>
-        <Route index element={<Feed />} />
-        <Route path="profile/:id" element={<Profile />} />
-        <Route path="bookmarks" element={<Bookmarks />} />
+      <Route element={<Home />}>
+        <Route path="/home" element={<Feed />} />
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/bookmarks" element={<Bookmarks />} />
       </Route>
     </Routes>
   );

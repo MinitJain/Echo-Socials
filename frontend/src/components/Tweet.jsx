@@ -9,7 +9,7 @@ import { getRefresh } from "../redux/tweetSlice";
 import { bookmarkUpdate } from "../redux/userSlice";
 import { Link } from "react-router-dom";
 
-const Tweet = ({ tweet }) => {
+const Tweet = ({ tweet, readOnly = false }) => {
   const { user } = useSelector((store) => store.user);
   const [likes, setLikes] = useState(tweet?.likes || []);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -27,7 +27,7 @@ const Tweet = ({ tweet }) => {
 
       setLikes(updatedLikes);
 
-      const res = await API.put(`/api/v1/tweet/like/${id}`, { id: user?._id });
+      const res = await API.put(`/tweet/like/${id}`, { id: user?._id });
       if (res.data.success) dispatch(getRefresh());
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
@@ -36,7 +36,7 @@ const Tweet = ({ tweet }) => {
 
   const deleteTweetHandler = async (id) => {
     try {
-      const res = await API.delete(`/api/v1/tweet/delete/${id}`);
+      const res = await API.delete(`/tweet/delete/${id}`);
       if (res.data.success) {
         toast.success("Tweet deleted successfully!");
         dispatch(getRefresh());
@@ -54,7 +54,7 @@ const Tweet = ({ tweet }) => {
 
     try {
       dispatch(bookmarkUpdate(tweetId));
-      const res = await API.put(`/api/v1/user/bookmark/${tweetId}`, {
+      const res = await API.put(`/user/bookmark/${tweetId}`, {
         id: user?._id,
       });
 
@@ -118,6 +118,7 @@ const Tweet = ({ tweet }) => {
             </div>
 
             {/* Actions */}
+            {!readOnly && (
             <div className="flex items-center gap-5 pt-1.5">
               {/* Like */}
               <button
@@ -191,6 +192,7 @@ const Tweet = ({ tweet }) => {
                 </button>
               )}
             </div>
+            )}
           </div>
         </div>
       </div>

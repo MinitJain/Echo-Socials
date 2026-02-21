@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
-import { USER_API_END_POINT } from "../utils/constant.js";
+import { useSearchParams } from "react-router-dom";
+import API from "../api/axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -9,7 +9,9 @@ import useTheme from "../hooks/useTheme";
 import { RiMoonClearLine, RiSunLine } from "react-icons/ri";
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(false);
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode');
+  const [isLogin, setIsLogin] = useState(mode !== 'signup');
   const { isDark, toggleTheme } = useTheme();
 
   const [formData, setFormData] = useState({
@@ -50,26 +52,12 @@ const Login = () => {
 
     if (isLogin) {
       try {
-        const res = await axios.post(
-          `${USER_API_END_POINT}/login`,
-          {
-            email,
-            password,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          },
-        );
-        console.log("Full Login Response:", res);
-        console.log("Login API Response:", res.data);
+        const res = await API.post("/user/login", { email, password });
 
         if (res.data.success) {
           dispatch(setUser(res?.data?.user));
           localStorage.setItem("user", JSON.stringify(res?.data?.user));
-          navigate("/");
+          navigate("/home");
 
           toast.success(res.data.message);
         }
@@ -79,27 +67,18 @@ const Login = () => {
       }
     } else {
       try {
-        const res = await axios.post(
-          `${USER_API_END_POINT}/register`,
-          {
-            name,
-            email,
-            username,
-            password,
-            confirmPassword,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          },
-        );
+        const res = await API.post("/user/register", {
+          name,
+          email,
+          username,
+          password,
+          confirmPassword,
+        });
 
         if (res.data.success) {
           dispatch(setUser(res?.data?.user));
           localStorage.setItem("user", JSON.stringify(res?.data?.user));
-          navigate("/");
+          navigate("/home");
           toast.success(res.data.message);
         }
       } catch (error) {
