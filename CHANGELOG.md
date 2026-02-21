@@ -38,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed Echo AI button from `LeftSidebar.jsx`
   - Removed elevated AI button from `MobileNav.jsx`
   - Removed CopilotKit content path from `tailwind.config.js`
+- API base URL fallback: Added robust getBaseURL() function to constant.js
+  - Handles undefined/null/empty string cases to prevent "undefined/api/v1" URLs
+  - Ensures Vercel proxy rewrites work correctly
 
 ### Verified
 - Server startup: PORT correctly defaults to 8080 (from `process.env.PORT || 8080`)
