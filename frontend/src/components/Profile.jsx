@@ -13,7 +13,12 @@ import useGetProfile from "../hooks/useGetProfile";
 import useGetTweets from "../hooks/useGetTweets";
 import useTheme from "../hooks/useTheme";
 import API from "../api/axios";
-import { setUser, getOtherUsers, getMyProfile, followingUpdate } from "../redux/userSlice";
+import {
+  setUser,
+  getOtherUsers,
+  getMyProfile,
+  followingUpdate,
+} from "../redux/userSlice";
 import { getRefresh } from "../redux/tweetSlice";
 import { toast } from "react-hot-toast";
 import EditProfile from "./EditProfile";
@@ -115,7 +120,11 @@ const Profile = () => {
                   onClick={toggleTheme}
                   className="flex w-full items-center gap-3 px-4 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900"
                 >
-                  {isDark ? <RiSunLine size={18} /> : <RiMoonClearLine size={18} />}
+                  {isDark ? (
+                    <RiSunLine size={18} />
+                  ) : (
+                    <RiMoonClearLine size={18} />
+                  )}
                   {isDark ? "Light Mode" : "Dark Mode"}
                 </button>
                 <button

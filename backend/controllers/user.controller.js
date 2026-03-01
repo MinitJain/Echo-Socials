@@ -1,5 +1,4 @@
 import { User } from "../models/user.model.js";
-import { Tweet } from "../models/tweet.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -16,18 +15,15 @@ export const Register = async (req, res) => {
       });
     }
 
-    const existingUser = await User.findOne({ email }).lean();
-    if (existingUser) {
-      return res.status(400).json({
-        message: "Email already in use.",
-        success: false,
-      });
-    }
+    const isUserALreadyExisting = await User.findOne({
+      $or: [{ email }, { username }],
+    }).lean();
 
-    const existingUsername = await User.findOne({ username }).lean();
-    if (existingUsername) {
-      return res.status(400).json({
-        message: "Username already in use.",
+    if (isUserALreadyExisting) {
+      const field =
+        isUserALreadyExisting.email === email ? "Email" : "Username";
+      return res.status(409).json({
+        message: `${field} already in use.`,
         success: false,
       });
     }
@@ -41,7 +37,7 @@ export const Register = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = await jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
 
@@ -55,7 +51,7 @@ export const Register = async (req, res) => {
       .cookie("token", token, {
         httpOnly: true,
         secure: isProduction,
-        sameSite: isProduction ? 'none' : 'lax',
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 24 * 60 * 60 * 1000,
       })
       .json({
@@ -122,7 +118,7 @@ export const Login = async (req, res) => {
       .cookie("token", token, {
         httpOnly: true,
         secure: isProduction,
-        sameSite: isProduction ? 'none' : 'lax',
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 24 * 60 * 60 * 1000,
       })
       .json({
@@ -145,7 +141,7 @@ export const logout = async (req, res) => {
     .cookie("token", "", {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
+      sameSite: isProduction ? "none" : "lax",
       expires: new Date(0),
     })
     .status(200)
@@ -157,50 +153,39 @@ export const logout = async (req, res) => {
 
 export const bookmark = async (req, res) => {
   try {
-    const LoggedInUserId = req.user;
-
+    const loggedInUserId = req.user;
     const tweetId = req.params.id;
 
-    const foundUser = await User.findById(LoggedInUserId);
+    // Step 1: Try to remove the tweetId from the bookmarks array
+    const result = await User.updateOne(
+      { _id: loggedInUserId, bookmarks: tweetId },
+      { $pull: { bookmarks: tweetId } },
+    );
 
-    // If user doesn't exist
-    if (!foundUser) {
-      return res.status(404).json({
-        message: "User not found.",
-        success: false,
-      });
-    }
-
-    // If tweet is already bookmarked, remove it
-    if (foundUser.bookmarks.includes(tweetId)) {
-      await User.findByIdAndUpdate(LoggedInUserId, {
-        $pull: { bookmarks: tweetId },
-      });
-
+    // Step 2: If modifiedCount is 0, it wasn't bookmarked, so we add it
+    if (result.modifiedCount === 0) {
+      await User.updateOne(
+        { _id: loggedInUserId },
+        { $addToSet: { bookmarks: tweetId } },
+      );
       return res.status(200).json({
-        message: "Bookmark removed successfully.",
-        success: true,
-      });
-    } else {
-      // If tweet is not bookmarked, add it
-      await User.findByIdAndUpdate(LoggedInUserId, {
-        $push: { bookmarks: tweetId },
-      });
-
-      return res.status(200).json({
-        message: "Bookmark added successfully.",
+        message: "Tweet bookmarked successfully.",
         success: true,
       });
     }
+
+    return res.status(200).json({
+      message: "Bookmark removed successfully.",
+      success: true,
+    });
   } catch (error) {
     console.log("Bookmark Error:", error);
     return res.status(500).json({
-      message: "Error in saving bookmarks.",
+      message: "Error updating bookmark.",
       success: false,
     });
   }
 };
-
 export const GetUserProfile = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -220,7 +205,7 @@ export const GetUserProfile = async (req, res) => {
 };
 export const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user).select("-password");
+    const user = await User.findById(req.user).select("-password").lean();
 
     if (!user) {
       return res.status(404).json({
@@ -252,7 +237,8 @@ export const getOtherUserProfile = async (req, res) => {
     })
       .select("-password")
       .sort({ createdAt: -1 })
-      .limit(10);
+      .limit(10)
+      .lean();
 
     return res.status(200).json({
       success: true,
@@ -269,80 +255,70 @@ export const getOtherUserProfile = async (req, res) => {
 
 export const follow = async (req, res) => {
   try {
-    const LoggedInUserId = req.user;
+    const loggedInUserId = req.user;
     const userIdToFollow = req.params.id;
 
-    const loggedInUser = await User.findById(LoggedInUserId);
-    const userToFollow = await User.findById(userIdToFollow);
-
-    if (!loggedInUser || !userToFollow) {
-      return res.status(404).json({
-        message: "User not found.",
-        success: false,
-      });
+    if (loggedInUserId === userIdToFollow) {
+      return res
+        .status(400)
+        .json({ message: "You cannot follow yourself.", success: false });
     }
 
-    // Check if already following
-    if (userToFollow.followers.includes(LoggedInUserId)) {
-      return res.status(400).json({
-        message: "You are already following this user.",
-        success: false,
-      });
-    }
+    const [targetUpdate, selfUpdate] = await Promise.all([
+      User.updateOne(
+        { _id: userIdToFollow, followers: { $ne: loggedInUserId } },
+        { $addToSet: { followers: loggedInUserId } },
+      ),
+      User.updateOne(
+        { _id: loggedInUserId },
+        { $addToSet: { following: userIdToFollow } },
+      ),
+    ]);
 
-    // Push follower/following
-    await userToFollow.updateOne({ $push: { followers: LoggedInUserId } });
-    await loggedInUser.updateOne({ $push: { following: userIdToFollow } });
+    // If targetUpdate.matchedCount is 0, the user to follow doesn't exist.
+    if (targetUpdate.matchedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "User not found.", success: false });
+    }
 
     return res.status(200).json({
-      message: `${loggedInUser.name} has followed ${userToFollow.name}`,
+      message: "Followed successfully",
       success: true,
     });
   } catch (error) {
     console.log("Follow Error:", error);
-    return res.status(500).json({
-      message: "Error following user.",
-      success: false,
-    });
+    return res
+      .status(500)
+      .json({ message: "Error following user.", success: false });
   }
 };
-
 export const unfollow = async (req, res) => {
   try {
-    const LoggedInUserId = req.user;
-    const userIdToFollow = req.params.id;
+    const loggedInUserId = req.user;
+    const userIdToUnfollow = req.params.id;
 
-    const loggedInUser = await User.findById(LoggedInUserId);
-    const userToUnfollow = await User.findById(userIdToFollow);
-
-    if (!loggedInUser || !userToUnfollow) {
-      return res.status(404).json({
-        message: "User not found.",
-        success: false,
-      });
-    }
-
-    // Check if already following
-    if (!loggedInUser.following.includes(userIdToFollow)) {
-      return res.status(400).json({
-        message: "You have alerady unfollowed this user.",
-        success: false,
-      });
-    }
-
-    await userToUnfollow.updateOne({ $pull: { followers: LoggedInUserId } });
-    await loggedInUser.updateOne({ $pull: { following: userIdToFollow } });
+    // Parallel atomic removal
+    await Promise.all([
+      User.updateOne(
+        { _id: loggedInUserId },
+        { $pull: { following: userIdToUnfollow } },
+      ),
+      User.updateOne(
+        { _id: userIdToUnfollow },
+        { $pull: { followers: loggedInUserId } },
+      ),
+    ]);
 
     return res.status(200).json({
-      message: `${loggedInUser.name} has unfollowed ${userToUnfollow.name}`,
+      message: "Unfollowed successfully",
       success: true,
     });
   } catch (error) {
-    console.log("UnFollow Error:", error);
-    return res.status(500).json({
-      message: "Error unfollowing user.",
-      success: false,
-    });
+    console.log("Unfollow Error:", error);
+    return res
+      .status(500)
+      .json({ message: "Error unfollowing user.", success: false });
   }
 };
 

@@ -21,18 +21,24 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    followers: {
-      type: Array,
-      default: [], //If value (followers in this case) not provided, defaults to empty array
-    },
-    following: {
-      type: Array,
-      default: [], //If value not provided, defaults to empty array
-    },
-    bookmarks: {
-      type: Array,
-      default: [], //If value not provided, defaults to empty array
-    },
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    bookmarks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tweet",
+      },
+    ],
     bio: {
       type: String,
       default: "",
